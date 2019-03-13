@@ -1,0 +1,73 @@
+﻿
+
+
+@{
+    ViewBag.Title = "Slack";
+}
+
+
+    <body>
+        <div class="container">
+            <h2>Slack Client</h2>
+            <form class="form-inline" role="form">
+                <textarea class="form-control" id="textMessage" name="textMessage" rows="3"></textarea>
+                <button type="button" id="sendMessage" class="btn btn-primary mb-2">Send</button>
+            </form>
+        </div>
+        <br/>
+        <div class="alert alert-success collapse">
+            <strong>The message has been sent !</strong>
+        </div>
+        <div class="alert alert-warning collapse">
+            <strong>The message has not been sent ! Please try again.</strong>
+        </div>
+        <div class="alert alert-failure collapse">
+            <strong>Sorry. The appliaction is unreachable.</strong>
+        </div>
+        <div class="alert alert-info collapse">
+            The message should not be empty !
+        </div>
+    </body>
+
+
+
+
+<script>
+    $('#sendMessage').click(function () {  
+
+        // Check if the message is not empty
+        if ($.trim($('#textMessage').val()) == '') {
+            // Display warning message and reset the text area with message sent
+            $( "div.alert-info" ).fadeIn( 400 ).delay( 1500 ).fadeOut( 800 );
+        }
+        else {
+            // Controller and method to call to send the message to slack
+            var url = "/Slack/SendSlackMessageAsync"; 
+
+            // Message to send
+            var mes = $("#textMessage").val();  
+
+            // Send the message to slack
+            $.post(url, { Message: mes }, function (data) {  
+
+                // Status of the message function
+                var yValue = data;
+
+                if (yValue == "valid") {
+                    // Display success message
+                    $("div.alert-success").fadeIn(400).delay(1500).fadeOut(800);
+                    $("#textMessage").val('').empty();
+                }
+                else if (yValue == "invalid") {
+                    // Display warning message and reset the text area with message sent
+                    $( "div.alert-warning" ).fadeIn( 400 ).delay( 1500 ).fadeOut( 800 );
+                }
+                else if (yValue == "Error") {
+                    // Display failure message and reset the text area with the message sent
+                    $( "div.alert-failure" ).fadeIn( 400 ).delay( 1500 ).fadeOut( 800 );
+                }
+            });  
+        }
+    })  
+</script>
+
